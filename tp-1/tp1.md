@@ -1,7 +1,7 @@
 TP1
 
 ### 1) -e 
-Passer des variables d'environnement avec l'option -e lors du lancement d'un conteneur évite d'écrire en dur les informations dans le docker file 
+Passer des variables d'environnement avec l'option -e lors du lancement d'un conteneur évite d'écrire en dur les informations de paramètrage dans le docker file 
 ### 2) Volume 
 Le volume permet la persistance des données, il permet de stocker les données en dehors du conteneur, ainsi on peut garder les données même si le conteneur est détruit 
 ### 3) Dockerfile 
@@ -92,8 +92,8 @@ Docker-compose est un outil qui permet de définir et gérer des applications mu
 
 Placer nos images Docker dans un dépôt en ligne comme Docker Hub présente plusieurs avantages :
 
-Accessibilité : Cela permet de partager facilement des images avec d'autres développeurs ou machines, peu importe leur localisation.
-Centralisation : En hébergeant les images dans un dépôt centralisé, on simplifie la gestion des versions et l'accès aux dernières versions de l'image.
-Facilité de déploiement : Les images stockées sur un dépôt en ligne peuvent être utilisées sur différents environnements sans avoir besoin de recréer l'image à chaque fois.
-Collaboration : Lorsque l'image est publique ou partagée avec des équipes, elle devient un moyen de collaboration efficace, avec la possibilité de récupérer des mises à jour ou des corrections.
-Sauvegarde : Stocker des images sur Docker Hub ou un dépôt privé garantit leur sécurité et leur disponibilité en cas de perte locale.
+- Accessibilité : Cela permet de partager facilement des images avec d'autres développeurs ou machines, peu importe leur localisation.
+- Centralisation : En hébergeant les images dans un dépôt centralisé, on simplifie la gestion des versions et l'accès aux dernières versions de l'image.
+- Facilité de déploiement : Les images stockées sur un dépôt en ligne peuvent être utilisées sur différents environnements sans avoir besoin de recréer l'image à chaque fois.
+- Collaboration : Lorsque l'image est publique ou partagée avec des équipes, elle devient un moyen de collaboration efficace, avec la possibilité de récupérer des mises à jour ou des corrections.
+- Sauvegarde : Stocker des images sur Docker Hub ou un dépôt privé garantit leur sécurité et leur disponibilité en cas de perte locale.

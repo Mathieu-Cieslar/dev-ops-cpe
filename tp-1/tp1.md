@@ -56,3 +56,44 @@ Un reverse proxy est un serveur intermédiaire entre les clients et un ou plusie
 -  Simplification : Centralise la gestion des accès et permet d’héberger plusieurs applications sur un même domaine.
 -  Support SSL/TLS : Gère les certificats pour sécuriser les communications sans impacter les serveurs backend.
 
+### 6) Docker-compose
+Docker-compose est un outil qui permet de définir et gérer des applications multi-conteneurs avec Docker. Il utilise un fichier YAML pour configurer les services, les réseaux et les volumes nécessaires à l'application. Voici quelques avantages de docker-compose :
+-  Simplification : Permet de définir et lancer plusieurs conteneurs en une seule commande.
+- Configuration : Facilite la gestion des dépendances, des réseaux et des volumes.
+- Portabilité : Permet de déployer l'application sur différents environnements sans modification.
+- Gestion des versions : Permet de spécifier les versions des images et des services pour garantir la compatibilité.
+
+
+
+### 7) Docker Hub :
+
+**Commandes utilisées :**
+
+1. **Se connecter à Docker Hub :**
+   ```bash
+   docker login
+   ```
+   Cette commande vous permet de vous connecter à votre compte Docker Hub en utilisant vos identifiants.
+
+2. **Taguer l'image Docker :**
+   ```bash
+   docker tag my-database USERNAME/my-database:1.0
+   ```
+   Cette commande permet d'attribuer un tag à l'image `my-database`, en l'associant à votre nom d'utilisateur Docker Hub et à une version spécifique (`1.0`).
+
+3. **Pousser l'image vers Docker Hub :**
+   ```bash
+   docker push USERNAME/my-database:1.0
+   ```
+   Cela pousse l'image taggée vers Docker Hub, la rendant disponible dans votre compte Docker Hub, où elle pourra être utilisée par d'autres personnes ou sur d'autres machines.
+****
+
+### 8) Docker Hub 2 :
+
+Placer nos images Docker dans un dépôt en ligne comme Docker Hub présente plusieurs avantages :
+
+Accessibilité : Cela permet de partager facilement des images avec d'autres développeurs ou machines, peu importe leur localisation.
+Centralisation : En hébergeant les images dans un dépôt centralisé, on simplifie la gestion des versions et l'accès aux dernières versions de l'image.
+Facilité de déploiement : Les images stockées sur un dépôt en ligne peuvent être utilisées sur différents environnements sans avoir besoin de recréer l'image à chaque fois.
+Collaboration : Lorsque l'image est publique ou partagée avec des équipes, elle devient un moyen de collaboration efficace, avec la possibilité de récupérer des mises à jour ou des corrections.
+Sauvegarde : Stocker des images sur Docker Hub ou un dépôt privé garantit leur sécurité et leur disponibilité en cas de perte locale.

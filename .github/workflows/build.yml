@@ -34,3 +34,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Mathieu-Cieslar_dev-ops-cpe
+        working-directory: tp-1/java/simple-api-student

@@ -44,7 +44,7 @@ runs-on: ubuntu-22.04
 
 Nous poussons des images Docker pour les partager, les déployer dans des environnements de production, ou les utiliser dans des pipelines CI/CD. Cela permet de garantir que les applications sont exécutées de manière cohérente sur différentes machines et infrastructures.
 
-### Sonar 
+### 4 Sonar 
 
 Etapes pour mettre en place Sonar :
 

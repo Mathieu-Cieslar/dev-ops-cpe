@@ -15,12 +15,36 @@ jobs:
       # Checkout du code source
       - uses: actions/checkout@v4
 
+
+      # Installation de JDK 21
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '23'
+
+            # Build et test du projet avec Maven
+      - name: Build and test with Maven
+        run: mvn clean verify
+        working-directory: tp-1/java/simple-api-student
+
+  # define job to build and publish docker image
+  build-and-push-docker-image:
+    needs: test-backend
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-22.04
+
+    # steps to perform in job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Build image and push backend
         uses: docker/build-push-action@v3
         with:
-            # relative path to the place where source code with Dockerfile is located
+          # relative path to the place where source code with Dockerfile is located
           context: java/simple-api-student
-            # Note: tags has to be all lower-case
+          # Note: tags has to be all lower-case
           tags: ${{secrets.DOCKERHUB_USERNAME}}/backend-cpe:latest
 
       - name: Build image and push database
@@ -30,7 +54,7 @@ jobs:
           context: database
           # Note: tags has to be all lower-case
           tags: ${{secrets.DOCKERHUB_USERNAME}}/database-cpe:latest
-              # DO the same for database
+          # DO the same for database
 
       - name: Build image and push httpd
         uses: docker/build-push-action@v3

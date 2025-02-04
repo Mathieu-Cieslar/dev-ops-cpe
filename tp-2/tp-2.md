@@ -40,3 +40,6 @@ runs-on: ubuntu-22.04
         run: mvn clean verify  # Nettoie, compile et exécute les tests du projet
         working-directory: tp-1/java/simple-api-student  # Définit le dossier où exécuter la commande
 ```
+### 3 Publication image docker hub 
+
+Nous poussons des images Docker pour les partager, les déployer dans des environnements de production, ou les utiliser dans des pipelines CI/CD. Cela permet de garantir que les applications sont exécutées de manière cohérente sur différentes machines et infrastructures.

@@ -1,15 +1,16 @@
 name: Build and Push Docker Image
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Test Backend"]
     branches:
       - main
+    types:
+      - completed
 
 jobs:
   build-and-push-docker-image:
-    needs: test-backend
     runs-on: ubuntu-22.04
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

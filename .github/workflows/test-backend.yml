@@ -1,0 +1,24 @@
+name: Test Backend
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '23'
+
+      - name: Build and test with Maven
+        run: mvn clean verify
+        working-directory: tp-1/java/simple-api-student

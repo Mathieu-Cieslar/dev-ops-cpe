@@ -43,3 +43,49 @@ runs-on: ubuntu-22.04
 ### 3 Publication image docker hub 
 
 Nous poussons des images Docker pour les partager, les déployer dans des environnements de production, ou les utiliser dans des pipelines CI/CD. Cela permet de garantir que les applications sont exécutées de manière cohérente sur différentes machines et infrastructures.
+
+### Sonar 
+
+Etapes pour mettre en place Sonar :
+
+- Création du compte sur SonarCloud
+- Integartion de l'organization avec le repository GitHub
+- Mise en place du fichier build.yaml
+```yaml
+name: SonarQube
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: 23
+          distribution: 'corretto' # Alternative distribution options are available.
+      - name: Cache SonarQube packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=Mathieu-Cieslar_dev-ops-cpe -Dsonar.organization=mathieu-cieslar -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./tp-1/java/simple-api-student/pom.xml
+```

@@ -1,0 +1,39 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push-docker-image:
+    needs: test-backend
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v3
+        with:
+          context: tp-1/java/simple-api-student
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:latest
+          push: true
+
+      - name: Build and push database image
+        uses: docker/build-push-action@v3
+        with:
+          context: tp-1/database
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:latest
+          push: true
+
+      - name: Build and push httpd image
+        uses: docker/build-push-action@v3
+        with:
+          context: tp-1/httpd
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:latest
+          push: true

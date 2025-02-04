@@ -7,6 +7,9 @@ on:
       - main
     types:
       - completed
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-push-docker-image:
@@ -16,25 +19,35 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to DockerHub
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Get current version
+        id: version
+        run: echo "VERSION=$(git describe --tags --abbrev=0 | awk -F. -v OFS=. '{$NF++; print}')" >> $GITHUB_ENV
 
       - name: Build and push backend image
         uses: docker/build-push-action@v3
         with:
           context: tp-1/java/simple-api-student
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:latest
           push: true
 
       - name: Build and push database image
         uses: docker/build-push-action@v3
         with:
           context: tp-1/database
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:latest
           push: true
 
       - name: Build and push httpd image
         uses: docker/build-push-action@v3
         with:
           context: tp-1/httpd
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:latest
           push: true

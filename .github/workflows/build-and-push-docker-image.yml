@@ -21,18 +21,38 @@ jobs:
       - name: Login to DockerHub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Get current version
+      - name: Get current version from pom.xml
         id: version
         run: |
-          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.1")
+          VERSION=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" tp-1/java/simple-api-student/pom.xml)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Increment version
+        id: increment_version
+        run: |
+          VERSION=${{ env.VERSION }}
+          NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF++; print}')
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Update pom.xml with new version
+        run: |
+          sed -i "s|<version>${{ env.VERSION }}</version>|<version>${{ env.NEW_VERSION }}</version>|g" tp-1/java/simple-api-student/pom.xml
+
+      - name: Commit and push new version
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add tp-1/java/simple-api-student/pom.xml
+          git commit -m "Bump version to ${{ env.NEW_VERSION }}"
+          git tag ${{ env.NEW_VERSION }}
+          git push origin main --tags
 
       - name: Build and push backend image
         uses: docker/build-push-action@v3
         with:
           context: tp-1/java/simple-api-student
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:${{ env.NEW_VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/backend-cpe:latest
           push: true
 
@@ -41,7 +61,7 @@ jobs:
         with:
           context: tp-1/database
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:${{ env.NEW_VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/database-cpe:latest
           push: true
 
@@ -50,6 +70,6 @@ jobs:
         with:
           context: tp-1/httpd
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:${{ env.NEW_VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:latest
           push: true

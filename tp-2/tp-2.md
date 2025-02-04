@@ -48,9 +48,10 @@ Nous poussons des images Docker pour les partager, les déployer dans des enviro
 
 Etapes pour mettre en place Sonar :
 
-- Création du compte sur SonarCloud
-- Integartion de l'organization avec le repository GitHub
-- Mise en place du fichier build.yaml
+1) Création du compte sur SonarCloud
+2) Integartion de l'organization avec le repository GitHub
+3) Génération du token d'authentification
+4) Mise en place du fichier build.yaml : 
 ```yaml
 name: SonarQube
 on:

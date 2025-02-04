@@ -4,6 +4,8 @@ services:
     build: "java/simple-api-student"
     networks:
       - my-network
+    ports:
+      - "8080:8080"
     depends_on:
       - database
     environment:

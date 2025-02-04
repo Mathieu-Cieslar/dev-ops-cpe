@@ -9,7 +9,7 @@ spring:
     open-in-view: true
   datasource:
     url: ${DB_URL}
-    username: ${DB_URL}
+    username: ${DB_USR}
     password: ${DB_PWD}
     driver-class-name: org.postgresql.Driver
 management:

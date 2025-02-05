@@ -6,5 +6,3 @@
     pull: yes
     networks:
       - name: proxy-network
-    restart_policy: always
-    state: started

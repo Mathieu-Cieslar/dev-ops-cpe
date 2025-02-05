@@ -10,5 +10,3 @@
     networks:
       - name: backend-network
       - name: proxy-network
-    restart_policy: always
-    state: started

@@ -17,6 +17,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: write  # 🔥 Autorise le push dans le rep
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -89,12 +90,39 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/frontend-cpe:latest
           push: true
 
+#      - name: Deploy to Production
+#        uses: appleboy/ansible-playbook-action@v1.4.2
+#        with:
+#          playbook: deploy.yml
+#          inventory: inventory
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          remote_user: admin
+#          host: ${{ secrets.HOST_CPE }}
+#
+#      - name: Run Ansible Playbook
+#        env:
+#          ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
+#          ANSIBLE_HOST_KEY_CHECKING: False
+#        run: |
+#          ansible-playbook -i inventory/hosts.ini playbooks/deploy_web_server.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+
       - name: Deploy to Production
-        uses: appleboy/ansible-playbook-action@v1.4.2
+        uses: dawidd6/action-ansible-playbook@v2
         with:
+          # Required: playbook filepath
           playbook: deploy.yml
+
+          # Required: inventory file
           inventory: inventory
+
+          # Required: SSH private key for authentication
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          # Required: remote user for SSH connection
           remote_user: admin
+
+          # Required: host to deploy to
           host: ${{ secrets.HOST_CPE }}
+
+
 

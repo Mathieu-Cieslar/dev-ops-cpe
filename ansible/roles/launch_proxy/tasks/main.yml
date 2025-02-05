@@ -4,8 +4,6 @@
     name: tp-1-httpd-1
     image: mathieuc71/httpd-cpe:latest
     pull: yes
-    ports:
-      - "80:80"
     networks:
       - name: proxy-network
     restart_policy: always

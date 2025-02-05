@@ -4,11 +4,7 @@
     name: frontend
     image: mathieuc71/frontend-cpe:latest # Remplace par l'image correcte si besoin
     pull: yes
-    ports:
-      - "80:80"  # Change le port si nécessaire
     networks:
       - name: proxy-network
     restart_policy: always
     state: started
-    env:
-      VUE_APP_API_URL: "http://httpd"  # Pointe vers le service proxy HTTPD

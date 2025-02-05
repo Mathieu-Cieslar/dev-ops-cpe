@@ -113,7 +113,7 @@ jobs:
           playbook: ansible/deploy.yml
 
           # Required: inventory file
-          inventory: inventory
+          inventory: inventory/setup.yml
 
           # Required: SSH private key for authentication
           key: ${{ secrets.SSH_PRIVATE_KEY }}

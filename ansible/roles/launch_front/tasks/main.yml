@@ -1,0 +1,14 @@
+---
+- name: Déployer le conteneur Frontend
+  docker_container:
+    name: frontend
+    image: mathieuc71/frontend-cpe:1.0  # Remplace par l'image correcte si besoin
+    pull: yes
+    ports:
+      - "3000:80"  # Change le port si nécessaire
+    networks:
+      - name: proxy-network
+    restart_policy: always
+    state: started
+    env:
+      VUE_APP_API_URL: "http://httpd"  # Pointe vers le service proxy HTTPD

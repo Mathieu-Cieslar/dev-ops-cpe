@@ -1,0 +1,15 @@
+- name: Run Database container
+  docker_container:
+    name: tp-1-database-1
+    image: mathieuc71/database-cpe:latest
+    pull: yes
+    env:
+      POSTGRES_DB: "{{DB_NAME}}"
+      POSTGRES_USER: "{{DB_USR}}"
+      POSTGRES_PASSWORD: "{{DB_PWD}}"
+    networks:
+      - name: backend-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart_policy: always
+    state: started

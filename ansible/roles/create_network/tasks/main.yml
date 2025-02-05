@@ -1,0 +1,10 @@
+---
+- name: Create Docker networks
+  docker_network:
+    name: "{{ item }}"
+    driver: bridge
+  loop:
+    - backend-network
+    - proxy-network
+  vars:
+    ansible_python_interpreter: /usr/bin/python3

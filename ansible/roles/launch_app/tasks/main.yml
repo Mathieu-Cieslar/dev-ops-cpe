@@ -1,0 +1,14 @@
+- name: Run Application container
+  docker_container:
+    name: tp-1-backend-1
+    image: mathieuc71/backend-cpe:latest
+    pull: yes
+    env:
+      DB_URL: "{{ DB_URL }}"
+      DB_USR: "{{ DB_USR }}"
+      DB_PWD: "{{ DB_PWD }}"
+    networks:
+      - name: backend-network
+      - name: proxy-network
+    restart_policy: always
+    state: started

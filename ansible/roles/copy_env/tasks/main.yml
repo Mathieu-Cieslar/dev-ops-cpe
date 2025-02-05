@@ -1,0 +1,3 @@
+- name: Charger les variables d'environnement
+  ansible.builtin.include_vars:
+    file: ../../.env.yml

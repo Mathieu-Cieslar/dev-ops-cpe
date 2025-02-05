@@ -1,0 +1,12 @@
+- hosts: all
+  gather_facts: true
+  become: true
+
+  roles:
+    #- install_docker
+    - copy_env
+    - create_network
+    - launch_database
+    - launch_app
+    - launch_proxy
+    - launch_front

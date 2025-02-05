@@ -79,3 +79,12 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:${{ env.NEW_VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/httpd-cpe:latest
           push: true
+
+      - name: Build and push front image
+        uses: docker/build-push-action@v3
+        with:
+          context: tp-3/devops-front
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/frontend-cpe:${{ env.NEW_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/frontend-cpe:latest
+          push: true

@@ -33,6 +33,17 @@ services:
     depends_on:
       - backend
 
+  frontend:
+    build: "../tp-3/devops-front"
+    ports:
+      - "3000:80"  # Change ce port si nécessaire
+    networks:
+      - my-network
+    depends_on:
+      - backend
+
+
+
 networks:
   my-network:
 

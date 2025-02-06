@@ -114,12 +114,13 @@ jobs:
           ssh-keyscan -H ${{ secrets.HOST_CPE }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Production
-        uses: dawidd6/action-ansible-playbook@v2
-        with:
-          playbook: ansible/deploy.yml
-          inventory: inventory
-          key: ~/.ssh/id_rsa
-          remote_user: admin
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          ansible-playbook -i ${{ secrets.HOST_CPE }}, ansible/deploy.yml \
+            --private-key ~/.ssh/id_rsa \
+            -u admin \
+            -vv
 
 
 

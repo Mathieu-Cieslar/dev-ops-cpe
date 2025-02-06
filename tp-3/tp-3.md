@@ -94,3 +94,155 @@ all:  # 🔹 Niveau global : toutes les machines de l'inventaire
         tags: docker  # Permet d'exécuter uniquement cette tâche avec `--tags docker`
 
   ```
+### 3 Docker container tasks 
+
+# Déploiement Docker avec Ansible
+
+## 1. Création des réseaux Docker
+
+Création de deux réseaux Docker distincts :
+
+- **`backend-network`** : Réseau pour la communication entre le backend et la base de données.
+- **`proxy-network`** : Réseau pour la communication entre le backend et le serveur proxy HTTP.
+
+### Playbook pour la création des réseaux
+
+```yaml
+---
+- name: Créer les réseaux Docker
+  docker_network:
+    name: "{{ item }}"
+    driver: bridge
+  loop:
+    - backend-network
+    - proxy-network
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+```
+
+### Explication
+
+- **`docker_network`** : Ce module permet de créer un réseau Docker.
+- **`loop`** : Boucle pour créer `backend-network` et `proxy-network`.
+
+## 2. Gestion des variables d’environnement
+
+### Objectif
+
+Utiliser un fichier `.env.yml` pour gérer les variables d’environnement des conteneurs Docker (base de données, backend, etc.).
+
+### Exemple de fichier `.env.yml`
+
+```yaml
+DB_URL: ""
+DB_USR: ""
+DB_PWD: ""
+DB_NAME: ""
+```
+
+### Playbook pour charger les variables d’environnement
+
+```yaml
+---
+- name: Charger les variables d’environnement
+  ansible.builtin.include_vars:
+    file: ../../.env.yml
+```
+
+### Explication
+
+- **`include_vars`** : Ce module permet d’inclure un fichier de variables dans le playbook.
+- **`file`** : Spécifie le chemin du fichier `.env.yml` contenant les variables d’environnement pour la base de données et l’application.
+
+
+## 3. Déploiement des conteneurs Docker
+
+### Objectif
+
+Déployer les conteneurs pour le backend, la base de données et le proxy HTTP, en les attachant aux réseaux appropriés et en utilisant les variables d’environnement.
+
+### Playbook pour le déploiement des conteneurs
+
+Sur chaque deploiement on deploie les dernieres image créer auparavant  
+
+#### Déploiement du conteneur de la base de données
+
+```yaml
+- name: Run Database container
+  docker_container:
+    name: tp-1-database-1
+    image: mathieuc71/database-cpe:latest
+    pull: yes
+    env:
+      POSTGRES_DB: "{{DB_NAME}}"
+      POSTGRES_USER: "{{DB_USR}}"
+      POSTGRES_PASSWORD: "{{DB_PWD}}"
+    networks:
+      - name: backend-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+```
+
+#### Déploiement du conteneur Backend
+
+```yaml
+- name: Run Application container
+  docker_container:
+    name: tp-1-backend-1
+    image: mathieuc71/backend-cpe:latest
+    pull: yes
+    env:
+      DB_URL: "{{ DB_URL }}"
+      DB_USR: "{{ DB_USR }}"
+      DB_PWD: "{{ DB_PWD }}"
+    networks:
+      - name: backend-network
+      - name: proxy-network
+```
+
+#### Déploiement du conteneur Proxy HTTP
+
+```yaml
+
+- name: Run Application container
+  docker_container:
+    name: tp-1-httpd-1
+    image: mathieuc71/httpd-cpe:latest
+    pull: yes
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - name: proxy-network
+    restart_policy: always
+    state: started
+```
+
+- **`pull`** : On mets la valeur a yes pour être sur de pull la dernière image 
+
+
+#### Instruction de deploiement 
+
+Enfin on donne les instruction avec la liste des tâches a executer 
+
+```yaml 
+- hosts: all
+  gather_facts: true
+  become: true
+
+  roles:
+    #- install_docker
+    - copy_env
+    - create_network
+    - launch_database
+    - launch_app
+    - launch_proxy
+```
+On vois dans ce fichier que chaque etape du deploiments correspond à un rôles 
+
+
+
+
+
+
+

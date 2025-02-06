@@ -106,23 +106,20 @@ jobs:
 #        run: |
 #          ansible-playbook -i inventory/hosts.ini playbooks/deploy_web_server.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
 
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST_CPE }} >> ~/.ssh/known_hosts
+
       - name: Deploy to Production
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          # Required: playbook filepath
           playbook: ansible/deploy.yml
-
-          # Required: inventory file
-          inventory: ${{ secrets.HOST_CPE }}
-
-          # Required: SSH private key for authentication
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-          # Required: remote user for SSH connection
+          inventory: inventory
+          key: ~/.ssh/id_rsa
           remote_user: admin
-
-          # Required: host to deploy to
-          host: ${{ secrets.HOST_CPE }}
 
 
 

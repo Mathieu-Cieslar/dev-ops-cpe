@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Push Docker Image
 
 on:
   workflow_run:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: github.event.workflow_run.conclusion == 'success'
     permissions:
-      contents: write  # 🔥 Autorise le push dans le repo
+      contents: write  # 🔥 Autorise le push dans le rep
 
     steps:
       - name: Checkout code
@@ -90,14 +90,6 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/frontend-cpe:latest
           push: true
 
-  deploy-to-production:
-    runs-on: ubuntu-22.04
-    needs: build-and-push-docker-image  # Attends la fin du build avant de se lancer
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
@@ -111,11 +103,15 @@ jobs:
           chmod 600 ansible/.env.yml
           cat ansible/.env.yml  # Debug: Vérifie si le fichier est bien créé
 
+
       - name: Deploy to Production
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
         run: |
-          ansible-playbook -i inventory/hosts.ini ansible/deploy.yml \
+          ansible-playbook -i ${{ secrets.HOST_CPE }}, ansible/deploy.yml \
             --private-key ~/.ssh/id_rsa \
             -u admin \
             -vv
+
+
+

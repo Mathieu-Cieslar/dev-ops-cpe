@@ -113,6 +113,13 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.HOST_CPE }} >> ~/.ssh/known_hosts
 
+      - name: Recreate .env.yml file
+        run: |
+          echo "${{ secrets.ENV_YML }}" > ansible/.env.yml
+          chmod 600 ansible/.env.yml
+          cat ansible/.env.yml  # Debug: Vérifie si le fichier est bien créé
+
+
       - name: Deploy to Production
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"

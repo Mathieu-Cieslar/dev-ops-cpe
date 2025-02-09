@@ -6,6 +6,18 @@ Passer des variables d'environnement avec l'option -e lors du lancement d'un con
 Le volume permet la persistance des données, il permet de stocker les données en dehors du conteneur, ainsi on peut garder les données même si le conteneur est détruit 
 ### 3) Dockerfile 
   ``docker run -p 5432:5432 --name db --net=app-network -v /tp-1/data:/var/lib/postgresql/data   mathieu/db  -d mathieu/db ``
+
+```yaml 
+FROM postgres:14.1-alpine
+
+# Variables d'environnement
+ENV POSTGRES_DB=db \
+   POSTGRES_USER=usr \
+   POSTGRES_PASSWORD=pwd
+# COPY sql file dans le conteur postgres
+COPY data/CreateScheme.sql /docker-entrypoint-initdb.d/
+COPY data/InsertData.sql /docker-entrypoint-initdb.d/
+```
 ### 4) Multi-stage
 Le multi stage permet de séparer les différentes étapes du préparation du service dans l'exemple utilise dans /java/simpleapi il permet de séparer la compilation et l'exécution du code, et à la fin le conteneur contiendra uniquement les outils nécessaires pour l'éxecution du code (ici on embarquant pas le compilateur)\
 Explication docker file : 
@@ -63,9 +75,56 @@ Docker-compose est un outil qui permet de définir et gérer des applications mu
 - Portabilité : Permet de déployer l'application sur différents environnements sans modification.
 - Gestion des versions : Permet de spécifier les versions des images et des services pour garantir la compatibilité.
 
+### 7) Dockerfile commande :
+Une commande pour lancer nos services docker :
+```bash docker compose up -d --build```
 
 
-### 7) Docker Hub :
+### 8) Docker-compose file :
+```yaml 
+services:
+  backend:
+    build: "java/simple-api-student"  # Construction du backend à partir du dossier "java/simple-api-student"
+    networks:
+      - my-network  # Connecte ce service au réseau "my-network"
+    ports:
+      - "8080:8080"  # Expose le port 8080 du conteneur sur le port 8080 de l'hôte
+    depends_on:
+      - database  # S'assure que le service "database" démarre avant "backend"
+    environment:
+      - DB_URL=${DB_URL}  # Injection des variables d'environnement pour la connexion à la base de données
+      - DB_USR=${DB_USR}
+      - DB_PWD=${DB_PWD}
+
+  database:
+    build: "database"  # Construction du service PostgreSQL à partir du dossier "database"
+    networks:
+      - my-network  # Connecte la base de données au même réseau que le backend
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # Stocke les données PostgreSQL de manière persistante
+    environment:
+      - POSTGRES_DB=${DB_NAME}  # Définit le nom de la base de données via une variable d'environnement
+      - POSTGRES_USER=${DB_USR}  # Définit l'utilisateur de la base de données
+      - POSTGRES_PASSWORD=${DB_PWD}  # Définit le mot de passe de l'utilisateur
+
+  httpd:
+    build: "httpd"  # Construction du serveur HTTP Apache à partir du dossier "httpd"
+    ports:
+      - "80:80"  # Expose le port 80 du conteneur sur le port 80 de l'hôte (serveur web)
+    networks:
+      - my-network  # Connecte le serveur HTTP au réseau
+    depends_on:
+      - backend  # S'assure que le backend démarre avant le serveur HTTP
+
+networks:
+  my-network:  # Définition du réseau Docker utilisé par les services
+
+volumes:
+  postgres-data:  # Volume persistant pour les données PostgreSQL
+```
+
+
+### 9) Docker Hub :
 
 **Commandes utilisées :**
 
@@ -88,7 +147,7 @@ Docker-compose est un outil qui permet de définir et gérer des applications mu
    Cela pousse l'image taggée vers Docker Hub, la rendant disponible dans votre compte Docker Hub, où elle pourra être utilisée par d'autres personnes ou sur d'autres machines.
 ****
 
-### 8) Docker Hub 2 :
+### 10) Docker Hub 2 :
 
 Placer nos images Docker dans un dépôt en ligne comme Docker Hub présente plusieurs avantages :
 

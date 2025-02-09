@@ -1,6 +1,6 @@
 # Ansible
 
-### 1 Introduction à Ansible
+### 1 Inventory
 
 liste des commandes : 
 
